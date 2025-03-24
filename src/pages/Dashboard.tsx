@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { Progress } from "@/components/ui/progress";
@@ -78,19 +79,21 @@ export default function Dashboard() {
   ];
 
   const renderStatusBadge = (status: string) => {
-    let badgeColor = "secondary";
+    // Fixed badge variants to only use valid values from the Badge component
+    let badgeVariant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+    
     if (status === "active") {
-      badgeColor = "green";
+      badgeVariant = "default"; // Using default for green
     } else if (status === "draft") {
-      badgeColor = "muted";
+      badgeVariant = "secondary";
     } else if (status === "paused") {
-      badgeColor = "yellow";
+      badgeVariant = "outline";
     } else if (status === "completed") {
-      badgeColor = "blue";
+      badgeVariant = "secondary";
     }
 
     return (
-      <Badge variant={badgeColor}>
+      <Badge variant={badgeVariant}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
