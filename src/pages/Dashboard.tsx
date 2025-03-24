@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MetricCard } from "@/components/shared/MetricCard";
+import MetricCard from "@/components/dashboard/MetricCard";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -22,7 +22,6 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-  // Sample data for the area chart
   const data = [
     { name: "Jan", uv: 4000, pv: 2400, amt: 2400 },
     { name: "Feb", uv: 3000, pv: 1398, amt: 2210 },
@@ -33,7 +32,6 @@ export default function Dashboard() {
     { name: "Jul", uv: 3490, pv: 4300, amt: 2100 },
   ];
 
-  // Sample data for campaigns
   const campaigns = [
     {
       id: "1",
@@ -90,7 +88,7 @@ export default function Dashboard() {
     }
 
     return (
-      <Badge variant={badgeColor}>
+      <Badge variant={badgeColor as any}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -106,10 +104,30 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard label="Total Reach" value="245,000" delta="+12%" />
-        <MetricCard label="Engagement Rate" value="14.5%" delta="-3%" />
-        <MetricCard label="Conversion Rate" value="3.8%" delta="+0.5%" />
-        <MetricCard label="Customer Acquisition Cost" value="$24.50" delta="-1.2%" />
+        <MetricCard 
+          title="Total Reach" 
+          value="245,000"
+          change={{ value: 12, trend: "up" }}
+          icon={<span>📈</span>}
+        />
+        <MetricCard 
+          title="Engagement Rate" 
+          value="14.5%"
+          change={{ value: 3, trend: "down" }}
+          icon={<span>👥</span>}
+        />
+        <MetricCard 
+          title="Conversion Rate" 
+          value="3.8%"
+          change={{ value: 0.5, trend: "up" }}
+          icon={<span>🎯</span>}
+        />
+        <MetricCard 
+          title="Customer Acquisition Cost" 
+          value="$24.50"
+          change={{ value: 1.2, trend: "down" }}
+          icon={<span>💰</span>}
+        />
       </div>
 
       <Card>
