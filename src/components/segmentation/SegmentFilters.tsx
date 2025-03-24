@@ -155,7 +155,7 @@ export default function SegmentFilters() {
             Location: New York
           </Badge>
           <Badge variant="outline" className="py-1">
-            Purchase Count: > 5
+            Purchase Count: &gt; 5
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground mt-4">

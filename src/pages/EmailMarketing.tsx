@@ -265,316 +265,318 @@ export default function EmailMarketing() {
           </div>
         </CardHeader>
         <CardContent>
-          <TabsContent value="compose" className="space-y-6 mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email-subject">Email Subject</Label>
-                  <Input 
-                    id="email-subject" 
-                    placeholder="Enter a compelling subject line..." 
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                  />
-                  {subject && (
-                    <div className="flex justify-between text-xs mt-1">
-                      <span>
-                        <Badge 
-                          variant="outline"
-                          className={`${
-                            subject.length < 30 
-                              ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400" 
-                              : subject.length <= 60 
-                              ? "bg-green-500/10 text-green-600 dark:text-green-400" 
-                              : "bg-red-500/10 text-red-600 dark:text-red-400"
-                          }`}
-                        >
-                          {subject.length < 30 
-                            ? "Too short" 
-                            : subject.length <= 60 
-                            ? "Optimal length" 
-                            : "Too long"}
-                        </Badge>
-                      </span>
-                      <span className="text-muted-foreground">
-                        {subject.length}/60 characters
-                      </span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email-template">Email Template</Label>
-                  <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                    <SelectTrigger id="email-template">
-                      <SelectValue placeholder="Select a template" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="blank">Blank Template</SelectItem>
-                      {emailTemplates.map((template) => (
-                        <SelectItem key={template.id} value={template.id}>
-                          {template.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="audience-segment">Audience Segment</Label>
-                  <Select value={selectedSegment} onValueChange={setSelectedSegment}>
-                    <SelectTrigger id="audience-segment">
-                      <SelectValue placeholder="Select a segment" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {audienceSegments.map((segment) => (
-                        <SelectItem key={segment.id} value={segment.id}>
-                          {segment.name} ({segment.count.toLocaleString()})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email-content">Email Content</Label>
-                  <div className="border border-border rounded-md overflow-hidden">
-                    <div className="bg-muted/50 p-2 flex space-x-1">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Type className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Format Text</TooltipContent>
-                        </Tooltip>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Link className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Insert Link</TooltipContent>
-                        </Tooltip>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Image className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Insert Image</TooltipContent>
-                        </Tooltip>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Smile className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Insert Emoji</TooltipContent>
-                        </Tooltip>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <AtSign className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Insert Personalization</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <Textarea 
-                      className="border-0 rounded-none focus-visible:ring-0 min-h-[200px]" 
-                      placeholder="Write your email content here..."
+          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+            <TabsContent value="compose" className="space-y-6 mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email-subject">Email Subject</Label>
+                    <Input 
+                      id="email-subject" 
+                      placeholder="Enter a compelling subject line..." 
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
                     />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="bg-background border border-border rounded-lg overflow-hidden">
-                  <div className="bg-muted/50 px-4 py-2 flex justify-between items-center border-b border-border">
-                    <span className="text-sm font-medium">Email Preview</span>
-                    <div className="flex space-x-1">
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Undo2 className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="p-4 min-h-[400px] flex items-center justify-center text-muted-foreground text-sm">
-                    {selectedTemplate ? (
-                      <div className="w-full space-y-4">
-                        <div className="bg-primary/5 h-32 w-full rounded-md flex items-center justify-center">
-                          <Image className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="h-6 bg-primary/5 w-3/4 rounded-md"></div>
-                          <div className="h-4 bg-primary/5 w-full rounded-md"></div>
-                          <div className="h-4 bg-primary/5 w-5/6 rounded-md"></div>
-                          <div className="h-4 bg-primary/5 w-full rounded-md"></div>
-                        </div>
-                        <div className="flex justify-center">
-                          <div className="h-10 bg-primary/10 w-1/3 rounded-md"></div>
-                        </div>
+                    {subject && (
+                      <div className="flex justify-between text-xs mt-1">
+                        <span>
+                          <Badge 
+                            variant="outline"
+                            className={`${
+                              subject.length < 30 
+                                ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400" 
+                                : subject.length <= 60 
+                                ? "bg-green-500/10 text-green-600 dark:text-green-400" 
+                                : "bg-red-500/10 text-red-600 dark:text-red-400"
+                            }`}
+                          >
+                            {subject.length < 30 
+                              ? "Too short" 
+                              : subject.length <= 60 
+                              ? "Optimal length" 
+                              : "Too long"}
+                          </Badge>
+                        </span>
+                        <span className="text-muted-foreground">
+                          {subject.length}/60 characters
+                        </span>
                       </div>
-                    ) : (
-                      <span>Select a template to preview content</span>
                     )}
                   </div>
-                </div>
-                
-                <div className="bg-primary/5 p-4 rounded-lg space-y-3">
-                  <h3 className="font-medium">Email Optimization Tips</h3>
-                  <div className="flex items-start space-x-2 text-sm">
-                    <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
-                    <span>Keep subject lines between 30-60 characters for optimal open rates.</span>
-                  </div>
-                  <div className="flex items-start space-x-2 text-sm">
-                    <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
-                    <span>Personalized emails have 26% higher open rates on average.</span>
-                  </div>
-                  <div className="flex items-start space-x-2 text-sm">
-                    <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
-                    <span>Avoid spam trigger words like "free", "guarantee", and "no risk".</span>
-                  </div>
-                  <div className="flex items-start space-x-2 text-sm">
-                    <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
-                    <span>Include a clear call-to-action button for better click rates.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-3">
-              <Button variant="outline">Save Draft</Button>
-              <Button variant="outline">Schedule</Button>
-              <Button className="flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                <span>Send Email</span>
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="design" className="mt-0">
-            <div className="text-center p-8 text-muted-foreground">
-              Design editor content will appear here
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="settings" className="space-y-6 mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="sender-name">Sender Name</Label>
-                  <Input id="sender-name" defaultValue="Marketing Team" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="reply-to">Reply-To Email</Label>
-                  <Input id="reply-to" type="email" defaultValue="marketing@example.com" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="send-time">Send Time</Label>
-                  <Select defaultValue="optimal">
-                    <SelectTrigger id="send-time">
-                      <SelectValue placeholder="Select send time" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="now">Send Immediately</SelectItem>
-                      <SelectItem value="optimal">Optimal Time (Recommended)</SelectItem>
-                      <SelectItem value="schedule">Schedule for Later</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <h3 className="font-medium">Advanced Settings</h3>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="track-opens">Track Opens</Label>
-                      <p className="text-sm text-muted-foreground">Monitor when recipients open your email</p>
-                    </div>
-                    <Switch id="track-opens" defaultChecked />
+                  <div className="space-y-2">
+                    <Label htmlFor="email-template">Email Template</Label>
+                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                      <SelectTrigger id="email-template">
+                        <SelectValue placeholder="Select a template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="blank">Blank Template</SelectItem>
+                        {emailTemplates.map((template) => (
+                          <SelectItem key={template.id} value={template.id}>
+                            {template.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="track-clicks">Track Clicks</Label>
-                      <p className="text-sm text-muted-foreground">Monitor when recipients click links</p>
-                    </div>
-                    <Switch id="track-clicks" defaultChecked />
+                  <div className="space-y-2">
+                    <Label htmlFor="audience-segment">Audience Segment</Label>
+                    <Select value={selectedSegment} onValueChange={setSelectedSegment}>
+                      <SelectTrigger id="audience-segment">
+                        <SelectValue placeholder="Select a segment" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {audienceSegments.map((segment) => (
+                          <SelectItem key={segment.id} value={segment.id}>
+                            {segment.name} ({segment.count.toLocaleString()})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="auto-resend">Auto Resend</Label>
-                      <p className="text-sm text-muted-foreground">Automatically resend to non-openers after 3 days</p>
+                  <div className="space-y-2">
+                    <Label htmlFor="email-content">Email Content</Label>
+                    <div className="border border-border rounded-md overflow-hidden">
+                      <div className="bg-muted/50 p-2 flex space-x-1">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Type className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Format Text</TooltipContent>
+                          </Tooltip>
+                          
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Link className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Insert Link</TooltipContent>
+                          </Tooltip>
+                          
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Image className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Insert Image</TooltipContent>
+                          </Tooltip>
+                          
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Smile className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Insert Emoji</TooltipContent>
+                          </Tooltip>
+                          
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <AtSign className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Insert Personalization</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <Textarea 
+                        className="border-0 rounded-none focus-visible:ring-0 min-h-[200px]" 
+                        placeholder="Write your email content here..."
+                      />
                     </div>
-                    <Switch id="auto-resend" />
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-background border border-border rounded-lg overflow-hidden">
+                    <div className="bg-muted/50 px-4 py-2 flex justify-between items-center border-b border-border">
+                      <span className="text-sm font-medium">Email Preview</span>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Undo2 className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="p-4 min-h-[400px] flex items-center justify-center text-muted-foreground text-sm">
+                      {selectedTemplate ? (
+                        <div className="w-full space-y-4">
+                          <div className="bg-primary/5 h-32 w-full rounded-md flex items-center justify-center">
+                            <Image className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                          <div className="space-y-2">
+                            <div className="h-6 bg-primary/5 w-3/4 rounded-md"></div>
+                            <div className="h-4 bg-primary/5 w-full rounded-md"></div>
+                            <div className="h-4 bg-primary/5 w-5/6 rounded-md"></div>
+                            <div className="h-4 bg-primary/5 w-full rounded-md"></div>
+                          </div>
+                          <div className="flex justify-center">
+                            <div className="h-10 bg-primary/10 w-1/3 rounded-md"></div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span>Select a template to preview content</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-primary/5 p-4 rounded-lg space-y-3">
+                    <h3 className="font-medium">Email Optimization Tips</h3>
+                    <div className="flex items-start space-x-2 text-sm">
+                      <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
+                      <span>Keep subject lines between 30-60 characters for optimal open rates.</span>
+                    </div>
+                    <div className="flex items-start space-x-2 text-sm">
+                      <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
+                      <span>Personalized emails have 26% higher open rates on average.</span>
+                    </div>
+                    <div className="flex items-start space-x-2 text-sm">
+                      <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                      <span>Avoid spam trigger words like "free", "guarantee", and "no risk".</span>
+                    </div>
+                    <div className="flex items-start space-x-2 text-sm">
+                      <ThumbsUp className="h-4 w-4 text-green-500 mt-0.5" />
+                      <span>Include a clear call-to-action button for better click rates.</span>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Delivery Options</Label>
-                  <div className="bg-primary/5 p-4 rounded-lg space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="bg-primary/10 text-primary p-2 rounded-md">
-                        <Clock className="h-4 w-4" />
+              <div className="flex justify-end space-x-3">
+                <Button variant="outline">Save Draft</Button>
+                <Button variant="outline">Schedule</Button>
+                <Button className="flex items-center gap-2">
+                  <Send className="h-4 w-4" />
+                  <span>Send Email</span>
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="design" className="mt-0">
+              <div className="text-center p-8 text-muted-foreground">
+                Design editor content will appear here
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="settings" className="space-y-6 mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sender-name">Sender Name</Label>
+                    <Input id="sender-name" defaultValue="Marketing Team" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="reply-to">Reply-To Email</Label>
+                    <Input id="reply-to" type="email" defaultValue="marketing@example.com" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="send-time">Send Time</Label>
+                    <Select defaultValue="optimal">
+                      <SelectTrigger id="send-time">
+                        <SelectValue placeholder="Select send time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="now">Send Immediately</SelectItem>
+                        <SelectItem value="optimal">Optimal Time (Recommended)</SelectItem>
+                        <SelectItem value="schedule">Schedule for Later</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <h3 className="font-medium">Advanced Settings</h3>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="track-opens">Track Opens</Label>
+                        <p className="text-sm text-muted-foreground">Monitor when recipients open your email</p>
                       </div>
-                      <div>
-                        <div className="font-medium text-sm">Optimal Send Time</div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          AI analyzes past engagement to determine the best time to send for maximum open rates.
-                        </div>
-                        <Button variant="link" className="p-0 h-auto text-xs mt-1">Learn more</Button>
-                      </div>
+                      <Switch id="track-opens" defaultChecked />
                     </div>
                     
-                    <div className="flex items-start space-x-3">
-                      <div className="bg-primary/10 text-primary p-2 rounded-md">
-                        <Users className="h-4 w-4" />
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="track-clicks">Track Clicks</Label>
+                        <p className="text-sm text-muted-foreground">Monitor when recipients click links</p>
                       </div>
-                      <div>
-                        <div className="font-medium text-sm">A/B Testing</div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Test different subject lines or content with a subset of recipients before sending to everyone.
-                        </div>
-                        <Button variant="link" className="p-0 h-auto text-xs mt-1">Set up A/B test</Button>
+                      <Switch id="track-clicks" defaultChecked />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="auto-resend">Auto Resend</Label>
+                        <p className="text-sm text-muted-foreground">Automatically resend to non-openers after 3 days</p>
                       </div>
+                      <Switch id="auto-resend" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label>Compliance</Label>
-                  <div className="bg-yellow-500/10 p-4 rounded-lg space-y-2">
-                    <div className="flex items-start space-x-2">
-                      <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
-                      <div className="text-sm">
-                        <span className="font-medium">Required for compliance:</span> Your email must include:
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Delivery Options</Label>
+                    <div className="bg-primary/5 p-4 rounded-lg space-y-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="bg-primary/10 text-primary p-2 rounded-md">
+                          <Clock className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">Optimal Send Time</div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            AI analyzes past engagement to determine the best time to send for maximum open rates.
+                          </div>
+                          <Button variant="link" className="p-0 h-auto text-xs mt-1">Learn more</Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-3">
+                        <div className="bg-primary/10 text-primary p-2 rounded-md">
+                          <Users className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">A/B Testing</div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Test different subject lines or content with a subset of recipients before sending to everyone.
+                          </div>
+                          <Button variant="link" className="p-0 h-auto text-xs mt-1">Set up A/B test</Button>
+                        </div>
                       </div>
                     </div>
-                    <ul className="text-sm space-y-1 ml-6 list-disc">
-                      <li>Your physical address</li>
-                      <li>A working unsubscribe link</li>
-                      <li>Clear identification of the sender</li>
-                    </ul>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Compliance</Label>
+                    <div className="bg-yellow-500/10 p-4 rounded-lg space-y-2">
+                      <div className="flex items-start space-x-2">
+                        <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+                        <div className="text-sm">
+                          <span className="font-medium">Required for compliance:</span> Your email must include:
+                        </div>
+                      </div>
+                      <ul className="text-sm space-y-1 ml-6 list-disc">
+                        <li>Your physical address</li>
+                        <li>A working unsubscribe link</li>
+                        <li>Clear identification of the sender</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </TabsContent>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
