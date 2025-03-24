@@ -12,6 +12,7 @@ import Campaigns from "./pages/Campaigns";
 import Segmentation from "./pages/Segmentation";
 import Predictions from "./pages/Predictions";
 import EmailMarketing from "./pages/EmailMarketing";
+import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -47,6 +48,7 @@ const AppLayout = () => (
           <Route path="/segmentation" element={<Segmentation />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/email" element={<EmailMarketing />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

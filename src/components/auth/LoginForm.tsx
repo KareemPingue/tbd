@@ -46,6 +46,7 @@ export default function LoginForm() {
             <Link
               to="/auth/reset-password"
               className="text-sm underline text-muted-foreground hover:text-primary transition-colors"
+              tabIndex={1} // Set higher tabIndex to ensure password field gets focus first
             >
               Forgot password?
             </Link>
