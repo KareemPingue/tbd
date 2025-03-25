@@ -40,9 +40,7 @@ appendonly.aof
 *.log
 
 # Cache
-/UsersisolaAppDataLocalnpm-cache
-/backend/UsersisolaAppDataLocalnpm-cache
-/frontend/UsersisolaAppDataLocalnpm-cache
+*cache*
 
 # Other
 *clear*.json
