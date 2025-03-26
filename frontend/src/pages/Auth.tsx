@@ -1,12 +1,18 @@
 
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Route, Routes, Navigate } from "react-router-dom";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
+import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Auth() {
   const location = useLocation();
-  const isRegister = location.pathname === "/auth/register";
+  const { isAuthenticated } = useAuth();
+
+  // Redirect to dashboard if user is already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="min-h-screen w-full flex">
@@ -46,7 +52,13 @@ export default function Auth() {
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center p-8">
-        {isRegister ? <RegisterForm /> : <LoginForm />}
+        <Routes>
+          <Route path="/" element={<Navigate to="/auth/login" replace />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+          <Route path="*" element={<Navigate to="/auth/login" replace />} />
+        </Routes>
       </div>
     </div>
   );

@@ -1,21 +1,32 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
     // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = "/dashboard";
+      
+      // Store user session in localStorage
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("user", JSON.stringify({ email, name: email.split("@")[0] }));
+      
+      toast.success("Successfully logged in");
+      navigate("/dashboard");
     }, 1500);
   };
 
@@ -37,6 +48,8 @@ export default function LoginForm() {
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -44,7 +57,7 @@ export default function LoginForm() {
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
             <Link
-              to="/auth/reset-password"
+              to="/auth/forgot-password"
               className="text-sm underline text-muted-foreground hover:text-primary transition-colors"
               tabIndex={1} // Set higher tabIndex to ensure password field gets focus first
             >
@@ -56,6 +69,8 @@ export default function LoginForm() {
             type="password"
             autoCapitalize="none"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>

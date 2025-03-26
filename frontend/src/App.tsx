@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "@/components/shared/Sidebar";
 import Navbar from "@/components/shared/Navbar";
 import Auth from "./pages/Auth";
@@ -15,6 +15,8 @@ import EmailMarketing from "./pages/EmailMarketing";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -25,10 +27,14 @@ const App = () => {
         <Toaster />
         <SonnerToaster />
         <BrowserRouter>
-          <Routes>
-            <Route path="/auth/*" element={<Auth />} />
-            <Route path="/*" element={<AppLayout />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/auth/*" element={<Auth />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/*" element={<AppLayout />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
@@ -42,7 +48,7 @@ const AppLayout = () => (
       <Navbar />
       <div className="pt-16">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/segmentation" element={<Segmentation />} />

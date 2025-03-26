@@ -3,6 +3,7 @@ import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ThemeToggle from "./ThemeToggle";
+import UserDropdown from "./UserDropdown";
 
 export default function Navbar() {
   return (
@@ -26,12 +27,10 @@ export default function Navbar() {
           <div className="lg:hidden">
             <ThemeToggle />
           </div>
-          <div className="hidden lg:flex items-center space-x-3">
-            <span className="text-sm font-medium">Jane Smith</span>
-            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <span className="text-xs font-medium">JS</span>
-            </div>
+          <div className="hidden lg:block">
+            <ThemeToggle />
           </div>
+          <UserDropdown />
         </div>
       </div>
     </header>

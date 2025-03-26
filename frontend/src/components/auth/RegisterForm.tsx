@@ -1,21 +1,45 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    
     setIsLoading(true);
+    
     // Simulate registration process
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = "/dashboard";
+      
+      // Store user session in localStorage
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("user", JSON.stringify({ 
+        email, 
+        name: `${firstName} ${lastName}`,
+        initials: `${firstName.charAt(0)}${lastName.charAt(0)}`
+      }));
+      
+      toast.success("Account created successfully");
+      navigate("/dashboard");
     }, 1500);
   };
 
@@ -31,11 +55,21 @@ export default function RegisterForm() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First name</Label>
-            <Input id="firstName" required />
+            <Input 
+              id="firstName" 
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required 
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="lastName">Last name</Label>
-            <Input id="lastName" required />
+            <Input 
+              id="lastName" 
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required 
+            />
           </div>
         </div>
         <div className="space-y-2">
@@ -47,6 +81,8 @@ export default function RegisterForm() {
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -57,6 +93,8 @@ export default function RegisterForm() {
             type="password"
             autoCapitalize="none"
             autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
@@ -67,6 +105,8 @@ export default function RegisterForm() {
             type="password"
             autoCapitalize="none"
             autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
         </div>

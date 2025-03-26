@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import MetricCard from "@/components/dashboard/MetricCard";
 import { Progress } from "@/components/ui/progress";
@@ -93,6 +94,8 @@ export default function Dashboard() {
       </Badge>
     );
   };
+
+  console.log("Dashboard rendering"); // Added for debugging
 
   return (
     <div className="container py-6 space-y-6">
