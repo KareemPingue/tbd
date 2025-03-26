@@ -39,10 +39,11 @@ appendonly.aof
 .git/
 *.log
 
+# Flask
+*venv*
+
 # Cache
-/UsersisolaAppDataLocalnpm-cache
-/backend/UsersisolaAppDataLocalnpm-cache
-/frontend/UsersisolaAppDataLocalnpm-cache
+*cache*
 
 # Other
 *clear*.json
