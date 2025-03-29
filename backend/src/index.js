@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcryptjs'); // Declared here once
+const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -7,7 +7,8 @@ const dotenv = require('dotenv');
 // Load environment variables from .env file - DO THIS FIRST
 dotenv.config();
 
-const pool = require('./db'); // Import after dotenv.config()
+// Import after dotenv.config()
+const pool = require('./db'); 
 const authRoutes = require('./routes/auth');
 const User = require('./models/User');
 
