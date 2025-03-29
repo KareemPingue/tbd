@@ -1,59 +1,38 @@
 const express = require('express');
 const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('../db'); // Import the pool from db.js
-const transporter = require('../config/nodemailer');
-const mongoose = require('mongoose'); // Import mongoose
-const User = mongoose.model('User'); // Import the User model
-// require('dotenv').config(); // Removed this line
+const User = require('../models/User');
+const PasswordResetToken = require('../models/PasswordResetToken');
+const sendResetEmail = require('../utils/mailer'); // Now it should find it
 
 const router = express.Router();
 
-// Forgot Password - Generate Reset Token
+// Forgot Password Route
 router.post('/forgot-password', async (req, res) => {
-    const { email } = req.body;
+  const { email } = req.body;
 
-    try {
-        // Check if user exists
-        // const [users] = await pool.execute('SELECT id FROM Users WHERE email = ?', [email]); // Use pool here
-        // if (users.length === 0) return res.status(404).json({ message: 'User not found' });
-        // const userId = users[0].id;
-        const user = await User.findOne({ email }); // Use User.findOne to find the user in MongoDB
-        if (!user) {
-            res.status(404).json({ error: "User not found" });
-            return;
-        }
-        const userId = user._id;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
 
-        const token = crypto.randomBytes(32).toString('hex');
-        const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min expiry
+  try {
+    const user = await User.findOne({ email });
 
-        // Save token in DB
-        await pool.execute( // Use pool here
-            'INSERT INTO PasswordResetTokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-            [userId, token, expiresAt]
-        );
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-        // Send email
-        const resetLink = `http://localhost:3000/reset-password?token=${token}`;
-        try {
-            await transporter.sendMail({
-                to: email,
-                subject: 'Password Reset Request',
-                text: `Click here to reset your password: ${resetLink}`,
-            });
-            res.json({ message: 'Password reset link sent to your email' });
-        } catch (emailError) {
-            console.error('Email sending error:', emailError);
-            return res.status(500).json({ message: 'Failed to send email', error: emailError.message }); // Return error to client
-        }
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1-hour expiry
 
+    await PasswordResetToken.create({
+      userId: user._id,
+      token,
+      expiresAt,
+    });
 
-    } catch (error) {
-        console.error('Forgot password error:', error); // Log the error
-        res.status(500).json({ error: error.message, message: 'Forgot password process failed.' }); // Send a user-friendly error message
-    }
+    await sendResetEmail(email, token);
+
+    res.json({ message: 'Password reset link sent to your email.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Reset Password
@@ -62,55 +41,23 @@ router.post('/reset-password', async (req, res) => {
 
     try {
         // Check if token exists and is valid
-        const [tokens] = await pool.execute( // Use pool here
-            'SELECT user_id FROM PasswordResetTokens WHERE token = ? AND expires_at > NOW()',
-            [token]
-        );
+        const resetToken = await PasswordResetToken.findOne({ token, expiresAt: { $gt: new Date() } });
 
-        if (tokens.length === 0) return res.status(400).json({ message: 'Invalid or expired token' });
+        if (!resetToken) return res.status(400).json({ message: 'Invalid or expired token' });
 
-        const userId = tokens[0].user_id;
+        const userId = resetToken.userId;
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // Update user password
-        await pool.execute('UPDATE Users SET password_hash = ? WHERE id = ?', [hashedPassword, userId]); // Use pool here
+        await User.updateOne({ _id: userId }, { password_hash: hashedPassword });
 
         // Delete used token
-        await pool.execute('DELETE FROM PasswordResetTokens WHERE token = ?', [token]); // Use pool here
+        await PasswordResetToken.deleteOne({ token });
 
         res.json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Reset password error:', error);
         res.status(500).json({ error: error.message, message: 'Password reset failed' });
-    }
-});
-
-// Logout - Blacklist JWT
-router.post('/logout', async (req, res) => {
-    const { token } = req.body;
-    if (!token) {
-        return res.status(400).json({ message: 'Token is required' }); // Explicitly handle missing token
-    }
-    try {
-        let decoded;
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
-        } catch (jwtError) {
-            return res.status(401).json({ message: 'Invalid token', error: jwtError.message }); // Token verification failed
-        }
-
-        const expiresAt = new Date(decoded.exp * 1000);
-        const userId = decoded.id;  // Assuming 'id' is the user ID claim
-
-        // Store token in blacklist
-        await pool.execute('INSERT INTO BlacklistedTokens (user_id, token, expires_at) VALUES (?, ?, ?)', // Use pool here
-            [userId, token, expiresAt]
-        );
-
-        res.json({ message: 'Logged out successfully' });
-    } catch (error) {
-        console.error('Logout error:', error);
-        res.status(500).json({ error: error.message, message: 'Logout failed' });
     }
 });
 
