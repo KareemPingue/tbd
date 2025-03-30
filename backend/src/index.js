@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -8,8 +8,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Import after dotenv.config()
-const pool = require('./db'); 
-const authRoutes = require('./routes/auth');
+const pool = require('./db');
+const authRoutes = require('./routes/authRoutes'); // Changed to authRoutes
 const User = require('./models/User');
 
 const app = express();
@@ -88,11 +88,6 @@ const loginHandler = async (req, res, next) => {
         next(error);
     }
 };
-
-// Removed the second declaration of bcrypt
-// const bcrypt = require('bcryptjs'); // Assuming you're using bcryptjs for password hashing
-// const User = require('./User'); // Assuming this is your Mongoose User model
-// const { pool } = require('./db'); // Assuming this is your MySQL connection pool
 
 // Register Handler
 const registerHandler = async (req, res, next) => {
@@ -173,8 +168,7 @@ const registerHandler = async (req, res, next) => {
 // Routes
 app.post('/api/login', loginHandler);
 app.post('/api/register', registerHandler);
-app.use('/api/auth', authRoutes);
-
+app.use('/api/auth', authRoutes); // Use the new authRoutes
 app.get('/', (req, res) => {
     res.send('Server is up and running!');
 });
