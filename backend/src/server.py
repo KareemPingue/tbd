@@ -14,7 +14,7 @@ def handle_campaigns():
     global next_campaign_id
     if request.method == 'POST':
         data = request.get_json()
-        # Add a unique ID to the campaign
+        # Adds a unique ID to the campaign
         data['id'] = next_campaign_id
         next_campaign_id += 1
         campaigns.append(data)
